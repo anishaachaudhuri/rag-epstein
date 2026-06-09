@@ -5,6 +5,8 @@ from sqlalchemy import (
     ForeignKey
 )
 
+from sqlalchemy.orm import relationship
+
 from app.db.base import Base
 
 
@@ -18,6 +20,14 @@ class Entity(Base):
         ForeignKey("chunks.id")
     )
 
-    entity_text = Column(String, nullable=False)
+    entity_text = Column(
+        String,
+        nullable=False
+    )
 
-    entity_label = Column(String, nullable=False)
+    entity_label = Column(
+        String,
+        nullable=False
+    )
+
+    chunk = relationship("Chunk")

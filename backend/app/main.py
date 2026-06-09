@@ -3,10 +3,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from app.core.config import settings
 from app.db.session import engine
+from app.api.search import router as search_router
 
 app = FastAPI(
     title="Investigative Intelligence Platform",
     version="1.0.0"
+)
+
+app.include_router(
+    search_router,
+    prefix="/api"
 )
 
 app.add_middleware(
