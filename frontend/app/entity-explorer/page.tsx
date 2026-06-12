@@ -1,21 +1,22 @@
 "use client";
 
 import { useState } from "react";
+
 import Sidebar from "@/components/layout/Sidebar";
 import TopBar from "@/components/layout/TopBar";
-import FilterBar from "@/components/search/FilterBar";
-import StatsStrip from "@/components/intelligence/StatsStrip";
-import EvidenceTable from "@/components/evidence/EvidenceTable";
-import EvidenceInspector from "@/components/evidence/EvidenceInspector";
-import { documents } from "@/lib/mockData";
 
-export default function Home() {
+import { entities } from "@/lib/entityMock";
+
+import EntityList from "@/components/metadata/EntityList";
+import EntityInspector from "@/components/metadata/EntityInspector";
+
+export default function EntityExplorerPage() {
   const [selectedId, setSelectedId] =
     useState(1);
 
-  const selectedDocument =
-    documents.find(
-      (doc) => doc.id === selectedId
+  const selectedEntity =
+    entities.find(
+      (entity) => entity.id === selectedId
     )!;
 
   return (
@@ -26,14 +27,14 @@ export default function Home() {
         <TopBar />
 
         <div className="p-8">
-          <h2
+          <h1
             className="
               newsreader
               text-4xl
             "
           >
-            Evidence Locker
-          </h2>
+            Entity Explorer
+          </h1>
 
           <p
             className="
@@ -41,29 +42,29 @@ export default function Home() {
               text-[var(--muted)]
             "
           >
-            Investigative document archive and
-            retrieval workspace.
+            Explore extracted entities and
+            document relationships.
           </p>
 
-          <StatsStrip />
-          <FilterBar />
           <div
             className="
               mt-8
               grid
               grid-cols-3
               gap-6
+              h-[75vh]
             "
           >
-            <div className="col-span-2">
-              <EvidenceTable
+            <div>
+              <EntityList
+                selectedId={selectedId}
                 onSelect={setSelectedId}
               />
             </div>
 
-            <div>
-              <EvidenceInspector
-                document={selectedDocument}
+            <div className="col-span-2">
+              <EntityInspector
+                entity={selectedEntity}
               />
             </div>
           </div>
