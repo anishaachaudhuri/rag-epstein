@@ -2,7 +2,49 @@ BAD_DATES = {
     "a month",
     "three months",
     "13 days",
-    "the next two years"
+    "the next two years",
+    "today",
+    "tomorrow",
+    "this week",
+    "last week",
+    "last year",
+    "many years",
+    "the years",
+    "years",
+    "daily",
+    "annual",
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+    "sunday"
+}
+
+NORMALIZATION_MAP = {
+    "U.S.": "United States",
+    "US": "United States",
+    "America": "United States",
+    "the United States": "United States",
+
+    "Trump": "Donald Trump",
+
+    "Epstein": "Jeffrey Epstein",
+    "Jeffrey": "Jeffrey Epstein",
+    "jeffrey E.": "Jeffrey Epstein",
+    "jeffrey E. <": "Jeffrey Epstein",
+    "JEE": "Jeffrey Epstein",
+
+    "Clinton": "Bill Clinton",
+
+    "the White House": "White House",
+
+    "NY": "New York",
+    "New York City": "New York",
+
+    "Dershowitz": "Alan Dershowitz",
+    "Maxwell": "Ghislaine Maxwell"
 }
 
 
@@ -22,7 +64,16 @@ def clean_entities(entities):
 
         label = entity["label"]
 
-        if label == "DATE" and text.lower() in BAD_DATES:
+        if text in NORMALIZATION_MAP:
+            text = NORMALIZATION_MAP[text]
+
+        if text.lower() in BAD_DATES:
+            continue
+
+        if text.isdigit():
+            continue
+
+        if len(text) < 2:
             continue
 
         key = (text, label)

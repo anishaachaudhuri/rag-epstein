@@ -14,11 +14,6 @@ from app.metadata.entity_extractor import (
 
 from app.metadata.entity_cleaner import clean_entities
 
-
-entities = extract_entities(chunk_text)
-
-entities = clean_entities(entities)
-
 def ingest_document(
     db,
     filename,
@@ -63,6 +58,9 @@ def ingest_document(
 
         entities = extract_entities(
             chunk_text
+        )
+        entities = clean_entities(
+            entities
         )
 
         for entity in entities:
