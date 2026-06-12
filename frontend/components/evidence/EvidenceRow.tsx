@@ -4,20 +4,15 @@ type Props = {
   filename: string;
   documentType: string;
   chunks: number;
-  entities: number;
-  onClick: () => void;
 };
 
 export default function EvidenceRow({
   filename,
   documentType,
   chunks,
-  entities,
-  onClick,
 }: Props) {
   return (
     <tr
-      onClick={onClick}
       className="
         border-b
         border-[var(--border)]
@@ -37,10 +32,6 @@ export default function EvidenceRow({
 
       <td className="p-4">
         {chunks}
-      </td>
-
-      <td className="p-4">
-        {entities}
       </td>
     </tr>
   );

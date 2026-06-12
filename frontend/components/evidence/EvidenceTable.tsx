@@ -1,17 +1,18 @@
 import EvidenceRow from "./EvidenceRow";
 
-import { documents } from "@/lib/mockData";
+import { Document } from "@/types/document";
 
 type Props = {
-  onSelect: (id: number) => void;
+  documents: Document[];
 };
 
 export default function EvidenceTable({
-  onSelect,
+  documents,
 }: Props) {
   return (
     <div
       className="
+        mt-8
         border
         border-[var(--border)]
         bg-[var(--panel)]
@@ -35,11 +36,7 @@ export default function EvidenceTable({
             </th>
 
             <th className="p-4 mono text-xs">
-              CHUNKS
-            </th>
-
-            <th className="p-4 mono text-xs">
-              ENTITIES
+              ID
             </th>
           </tr>
         </thead>
@@ -49,12 +46,10 @@ export default function EvidenceTable({
             <EvidenceRow
               key={doc.id}
               filename={doc.filename}
-              documentType={doc.documentType}
-              chunks={doc.chunks}
-              entities={doc.entities}
-              onClick={() =>
-                onSelect(doc.id)
+              documentType={
+                doc.document_type
               }
+              chunks={doc.id}
             />
           ))}
         </tbody>

@@ -1,23 +1,68 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Sidebar from "@/components/layout/Sidebar";
 import TopBar from "@/components/layout/TopBar";
 
-import { entities } from "@/lib/entityMock";
-
 import EntityList from "@/components/metadata/EntityList";
 import EntityInspector from "@/components/metadata/EntityInspector";
 
-export default function EntityExplorerPage() {
-  const [selectedId, setSelectedId] =
-    useState(1);
+import { getEntities } from "@/services/entityService";
+import { getEntityDetails } from "@/services/entityDetailService";
+import { useSearchParams } from "next/navigation";
 
-  const selectedEntity =
-    entities.find(
-      (entity) => entity.id === selectedId
-    )!;
+export default function EntityExplorerPage() {
+  const [entities, setEntities] =
+    useState<any[]>([]);
+
+  const [selectedName, setSelectedName] =
+    useState("");
+
+  const [details, setDetails] =
+    useState<any>(null);
+  const searchParams =
+  useSearchParams();
+
+  const entityFromUrl =
+  searchParams.get("entity");
+
+  useEffect(() => {
+    async function loadEntities() {
+      const data =
+        await getEntities();
+
+      setEntities(data);
+
+      if (entityFromUrl) {
+        setSelectedName(
+          entityFromUrl
+        );
+      }
+      else if (data.length > 0) {
+        setSelectedName(
+          data[0].name
+        );
+      }
+    }
+
+    loadEntities();
+  }, [entityFromUrl]);
+
+  useEffect(() => {
+    async function loadDetails() {
+      if (!selectedName) return;
+
+      const data =
+        await getEntityDetails(
+          selectedName
+        );
+
+      setDetails(data);
+    }
+
+    loadDetails();
+}, [selectedName]);
 
   return (
     <main className="flex h-screen">
@@ -57,15 +102,22 @@ export default function EntityExplorerPage() {
           >
             <div>
               <EntityList
-                selectedId={selectedId}
-                onSelect={setSelectedId}
+                entities={entities}
+                selectedName={
+                  selectedName
+                }
+                onSelect={
+                  setSelectedName
+                }
               />
             </div>
 
             <div className="col-span-2">
-              <EntityInspector
-                entity={selectedEntity}
-              />
+              {details && (
+                <EntityInspector
+                  entity={details}
+                />
+              )}
             </div>
           </div>
         </div>

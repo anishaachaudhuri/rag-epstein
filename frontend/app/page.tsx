@@ -1,22 +1,15 @@
-"use client";
-
-import { useState } from "react";
 import Sidebar from "@/components/layout/Sidebar";
 import TopBar from "@/components/layout/TopBar";
-import FilterBar from "@/components/search/FilterBar";
+
 import StatsStrip from "@/components/intelligence/StatsStrip";
+
 import EvidenceTable from "@/components/evidence/EvidenceTable";
-import EvidenceInspector from "@/components/evidence/EvidenceInspector";
-import { documents } from "@/lib/mockData";
 
-export default function Home() {
-  const [selectedId, setSelectedId] =
-    useState(1);
+import { getDocuments } from "@/services/documentService";
 
-  const selectedDocument =
-    documents.find(
-      (doc) => doc.id === selectedId
-    )!;
+export default async function Home() {
+  const documents =
+    await getDocuments();
 
   return (
     <main className="flex h-screen">
@@ -41,32 +34,15 @@ export default function Home() {
               text-[var(--muted)]
             "
           >
-            Investigative document archive and
-            retrieval workspace.
+            Investigative document archive
+            and retrieval workspace.
           </p>
 
           <StatsStrip />
-          <FilterBar />
-          <div
-            className="
-              mt-8
-              grid
-              grid-cols-3
-              gap-6
-            "
-          >
-            <div className="col-span-2">
-              <EvidenceTable
-                onSelect={setSelectedId}
-              />
-            </div>
 
-            <div>
-              <EvidenceInspector
-                document={selectedDocument}
-              />
-            </div>
-          </div>
+          <EvidenceTable
+            documents={documents}
+          />
         </div>
       </div>
     </main>

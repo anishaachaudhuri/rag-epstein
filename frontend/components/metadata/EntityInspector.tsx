@@ -3,10 +3,9 @@ import Badge from "@/components/ui/Badge";
 type Props = {
   entity: {
     name: string;
-    label: string;
-    documents: number;
-    chunks: number;
-    related: string[];
+    mentions: number;
+    documents: string[];
+    related_entities: string[];
   };
 };
 
@@ -21,6 +20,7 @@ export default function EntityInspector({
         border-[var(--border)]
         bg-[var(--panel)]
         p-6
+        overflow-y-auto
       "
     >
       <div
@@ -42,10 +42,14 @@ export default function EntityInspector({
         {entity.name}
       </h2>
 
-      <div className="mt-6">
-        <Badge>
-          {entity.label}
-        </Badge>
+      <div className="mt-8">
+        <div className="mono text-xs text-[var(--muted)]">
+          TOTAL MENTIONS
+        </div>
+
+        <div className="mt-2 text-2xl">
+          {entity.mentions}
+        </div>
       </div>
 
       <div className="mt-8">
@@ -53,33 +57,33 @@ export default function EntityInspector({
           DOCUMENTS
         </div>
 
-        <div className="mt-2 text-xl">
-          {entity.documents}
-        </div>
-      </div>
-
-      <div className="mt-6">
-        <div className="mono text-xs text-[var(--muted)]">
-          CHUNKS
-        </div>
-
-        <div className="mt-2 text-xl">
-          {entity.chunks}
+        <div className="mt-3 space-y-2">
+          {entity.documents.map(
+            (document) => (
+              <div
+                key={document}
+                className="
+                  text-sm
+                  break-all
+                "
+              >
+                {document}
+              </div>
+            )
+          )}
         </div>
       </div>
 
       <div className="mt-8">
         <div className="mono text-xs text-[var(--muted)]">
-          CO-OCCURRING ENTITIES
+          RELATED ENTITIES
         </div>
 
         <div className="mt-3 flex flex-wrap gap-2">
-          {entity.related.map(
-            (relatedEntity) => (
-              <Badge
-                key={relatedEntity}
-              >
-                {relatedEntity}
+          {entity.related_entities.map(
+            (related) => (
+              <Badge key={related}>
+                {related}
               </Badge>
             )
           )}

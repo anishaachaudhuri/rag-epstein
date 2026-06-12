@@ -1,12 +1,14 @@
-import { entities } from "@/lib/entityMock";
+import { Entity } from "@/types/entity";
 
 type Props = {
-  selectedId: number;
-  onSelect: (id: number) => void;
+  entities: Entity[];
+  selectedName: string;
+  onSelect: (name: string) => void;
 };
 
 export default function EntityList({
-  selectedId,
+  entities,
+  selectedName,
   onSelect,
 }: Props) {
   return (
@@ -21,9 +23,9 @@ export default function EntityList({
     >
       {entities.map((entity) => (
         <button
-          key={entity.id}
+          key={`${entity.name}-${entity.label}`}
           onClick={() =>
-            onSelect(entity.id)
+            onSelect(entity.name)
           }
           className={`
             w-full
@@ -33,15 +35,13 @@ export default function EntityList({
             border-[var(--border)]
 
             ${
-              selectedId === entity.id
+              selectedName === entity.name
                 ? "bg-[var(--panel-2)]"
                 : ""
             }
           `}
         >
-          <div>
-            {entity.name}
-          </div>
+          <div>{entity.name}</div>
 
           <div
             className="
