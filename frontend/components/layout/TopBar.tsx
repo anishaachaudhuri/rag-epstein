@@ -1,4 +1,37 @@
+"use client";
+
+import {
+  useState,
+} from "react";
+
+import {
+  useRouter,
+} from "next/navigation";
+
 export default function TopBar() {
+  const router =
+    useRouter();
+
+  const [query, setQuery] =
+    useState("");
+
+  function handleSearch(
+    e: React.KeyboardEvent<
+      HTMLInputElement
+    >
+  ) {
+    if (
+      e.key === "Enter" &&
+      query.trim()
+    ) {
+      router.push(
+        `/search?q=${encodeURIComponent(
+          query
+        )}`
+      );
+    }
+  }
+
   return (
     <div
       className="
@@ -11,6 +44,15 @@ export default function TopBar() {
       "
     >
       <input
+        value={query}
+        onChange={(e) =>
+          setQuery(
+            e.target.value
+          )
+        }
+        onKeyDown={
+          handleSearch
+        }
         placeholder="Search evidence..."
         className="
           w-full
