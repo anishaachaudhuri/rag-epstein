@@ -2,13 +2,13 @@ from fastapi import APIRouter
 from sqlalchemy import func
 
 from app.db.session import SessionLocal
-
 from app.models.entity import Entity
 
 router = APIRouter(
     prefix="/entities",
     tags=["entities"]
 )
+
 
 @router.get("/")
 def get_entities():
@@ -20,15 +20,17 @@ def get_entities():
         entities = (
             db.query(
                 Entity.entity_text,
-                Entity.entity_label,
-                func.count(Entity.id)
+                func.count(Entity.id).label(
+                    "mentions"
+                )
             )
             .group_by(
-                Entity.entity_text,
-                Entity.entity_label
+                Entity.entity_text
             )
             .order_by(
-                func.count(Entity.id).desc()
+                func.count(
+                    Entity.id
+                ).desc()
             )
             .limit(100)
             .all()
@@ -36,11 +38,10 @@ def get_entities():
 
         return [
             {
-                "name": e[0],
-                "label": e[1],
-                "mentions": e[2]
+                "name": entity.entity_text,
+                "mentions": entity.mentions
             }
-            for e in entities
+            for entity in entities
         ]
 
     finally:

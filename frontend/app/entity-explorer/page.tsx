@@ -5,12 +5,12 @@ import { useEffect, useState } from "react";
 import Sidebar from "@/components/layout/Sidebar";
 import TopBar from "@/components/layout/TopBar";
 
+import EntitySearch from "@/components/metadata/EntitySearch";
 import EntityList from "@/components/metadata/EntityList";
 import EntityInspector from "@/components/metadata/EntityInspector";
 
 import { getEntities } from "@/services/entityService";
 import { getEntityDetails } from "@/services/entityDetailService";
-import { useSearchParams } from "next/navigation";
 
 export default function EntityExplorerPage() {
   const [entities, setEntities] =
@@ -21,11 +21,18 @@ export default function EntityExplorerPage() {
 
   const [details, setDetails] =
     useState<any>(null);
-  const searchParams =
-  useSearchParams();
 
-  const entityFromUrl =
-  searchParams.get("entity");
+  const [search, setSearch] =
+    useState("");
+
+  const filteredEntities =
+    entities.filter((entity) =>
+      entity.name
+        .toLowerCase()
+        .includes(
+          search.toLowerCase()
+        )
+    );
 
   useEffect(() => {
     async function loadEntities() {
@@ -34,12 +41,23 @@ export default function EntityExplorerPage() {
 
       setEntities(data);
 
+      const params =
+        new URLSearchParams(
+          window.location.search
+        );
+
+      const entityFromUrl =
+        params.get("entity");
+
       if (entityFromUrl) {
         setSelectedName(
-          entityFromUrl
+          decodeURIComponent(
+            entityFromUrl
+          )
         );
-      }
-      else if (data.length > 0) {
+      } else if (
+        data.length > 0
+      ) {
         setSelectedName(
           data[0].name
         );
@@ -47,7 +65,7 @@ export default function EntityExplorerPage() {
     }
 
     loadEntities();
-  }, [entityFromUrl]);
+  }, []);
 
   useEffect(() => {
     async function loadDetails() {
@@ -62,16 +80,16 @@ export default function EntityExplorerPage() {
     }
 
     loadDetails();
-}, [selectedName]);
+  }, [selectedName]);
 
   return (
-    <main className="flex h-screen">
+    <main className="flex h-screen overflow-hidden">
       <Sidebar />
 
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col overflow-hidden">
         <TopBar />
 
-        <div className="p-8">
+        <div className="p-8 overflow-y-auto">
           <h1
             className="
               newsreader
@@ -91,18 +109,23 @@ export default function EntityExplorerPage() {
             document relationships.
           </p>
 
-          <div
-            className="
-              mt-8
-              grid
-              grid-cols-3
-              gap-6
-              h-[75vh]
-            "
-          >
-            <div>
+          <div className="mt-8">
+            <EntitySearch
+              value={search}
+              onChange={setSearch}
+            />
+
+            <div
+              className="
+                mt-4
+                overflow-x-auto
+                overflow-y-hidden
+              "
+            >
               <EntityList
-                entities={entities}
+                entities={
+                  filteredEntities
+                }
                 selectedName={
                   selectedName
                 }
@@ -112,7 +135,7 @@ export default function EntityExplorerPage() {
               />
             </div>
 
-            <div className="col-span-2">
+            <div className="mt-6">
               {details && (
                 <EntityInspector
                   entity={details}

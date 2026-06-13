@@ -1,9 +1,11 @@
-import { Entity } from "@/types/entity";
-
 type Props = {
-  entities: Entity[];
+  entities: any[];
+
   selectedName: string;
-  onSelect: (name: string) => void;
+
+  onSelect: (
+    name: string
+  ) => void;
 };
 
 export default function EntityList({
@@ -14,47 +16,45 @@ export default function EntityList({
   return (
     <div
       className="
-        h-full
-        border
-        border-[var(--border)]
-        bg-[var(--panel)]
-        overflow-y-auto
+        flex
+        flex-nowrap
+        gap-2
+        min-w-max
+        pb-2
       "
     >
-      {entities.map((entity) => (
-        <button
-          key={`${entity.name}-${entity.label}`}
-          onClick={() =>
-            onSelect(entity.name)
-          }
-          className={`
-            w-full
-            text-left
-            p-4
-            border-b
-            border-[var(--border)]
-
-            ${
-              selectedName === entity.name
-                ? "bg-[var(--panel-2)]"
-                : ""
+      {entities.map(
+        (entity, index) => (
+          <button
+            key={`${entity.name}-${index}`}
+            onClick={() =>
+              onSelect(
+                entity.name
+              )
             }
-          `}
-        >
-          <div>{entity.name}</div>
+            className={`
+              px-3
+              py-2
+              whitespace-nowrap
+              border
 
-          <div
-            className="
-              mono
-              text-xs
-              mt-1
-              text-[var(--muted)]
-            "
+              ${
+                selectedName ===
+                entity.name
+                  ? `
+                    border-[var(--accent)]
+                    bg-[var(--panel-2)]
+                  `
+                  : `
+                    border-[var(--border)]
+                  `
+              }
+            `}
           >
-            {entity.label}
-          </div>
-        </button>
-      ))}
+            {entity.name}
+          </button>
+        )
+      )}
     </div>
   );
 }

@@ -1,0 +1,21 @@
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "http://localhost:8000";
+
+export async function getStats() {
+  const response =
+    await fetch(
+      `${API_URL}/api/stats`,
+      {
+        cache: "no-store",
+      }
+    );
+
+  if (!response.ok) {
+    throw new Error(
+      "Failed to fetch stats"
+    );
+  }
+
+  return response.json();
+}

@@ -6,10 +6,14 @@ import StatsStrip from "@/components/intelligence/StatsStrip";
 import EvidenceTable from "@/components/evidence/EvidenceTable";
 
 import { getDocuments } from "@/services/documentService";
+import { getStats } from "@/services/statsService";
 
 export default async function Home() {
   const documents =
     await getDocuments();
+
+  const stats =
+    await getStats();
 
   return (
     <main className="flex h-screen">
@@ -38,7 +42,17 @@ export default async function Home() {
             and retrieval workspace.
           </p>
 
-          <StatsStrip />
+          <StatsStrip
+            documents={
+              stats.documents
+            }
+            chunks={
+              stats.chunks
+            }
+            entities={
+              stats.entities
+            }
+          />
 
           <EvidenceTable
             documents={documents}

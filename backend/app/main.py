@@ -9,6 +9,8 @@ from app.api.entities import router as entities_router
 from app.api.entity_details import (
     router as entity_details_router
 )
+from app.api.stats import router as stats_router
+
 app = FastAPI(
     title="Investigative Intelligence Platform",
     version="1.0.0"
@@ -31,6 +33,11 @@ app.include_router(
 
 app.include_router(
     entity_details_router,
+    prefix="/api"
+)
+
+app.include_router(
+    stats_router,
     prefix="/api"
 )
 

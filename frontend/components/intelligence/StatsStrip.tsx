@@ -1,4 +1,14 @@
-export default function StatsStrip() {
+type Props = {
+  documents: number;
+  chunks: number;
+  entities: number;
+};
+
+export default function StatsStrip({
+  documents,
+  chunks,
+  entities,
+}: Props) {
   return (
     <div
       className="
@@ -11,32 +21,50 @@ export default function StatsStrip() {
     >
       <div className="flex gap-12">
         <div>
-          <div className="mono text-xs text-[var(--muted)]">
+          <div
+            className="
+              mono
+              text-xs
+              text-[var(--muted)]
+            "
+          >
             DOCUMENTS
           </div>
 
           <div className="mt-1 text-xl">
-            100
+            {documents}
           </div>
         </div>
 
         <div>
-          <div className="mono text-xs text-[var(--muted)]">
+          <div
+            className="
+              mono
+              text-xs
+              text-[var(--muted)]
+            "
+          >
             CHUNKS
           </div>
 
           <div className="mt-1 text-xl">
-            111
+            {chunks}
           </div>
         </div>
 
         <div>
-          <div className="mono text-xs text-[var(--muted)]">
+          <div
+            className="
+              mono
+              text-xs
+              text-[var(--muted)]
+            "
+          >
             ENTITIES
           </div>
 
           <div className="mt-1 text-xl">
-            2485
+            {entities}
           </div>
         </div>
       </div>
