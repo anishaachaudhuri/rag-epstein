@@ -10,6 +10,9 @@ from app.api.entity_details import (
     router as entity_details_router
 )
 from app.api.stats import router as stats_router
+from app.api.synthesis import (
+    router as synthesis_router
+)
 
 app = FastAPI(
     title="Investigative Intelligence Platform",
@@ -38,6 +41,11 @@ app.include_router(
 
 app.include_router(
     stats_router,
+    prefix="/api"
+)
+
+app.include_router(
+    synthesis_router,
     prefix="/api"
 )
 

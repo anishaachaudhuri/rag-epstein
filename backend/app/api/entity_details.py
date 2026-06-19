@@ -1,7 +1,6 @@
 from fastapi import APIRouter
-
+from sqlalchemy import func
 from app.db.session import SessionLocal
-
 from app.models.entity import Entity
 from app.models.chunk import Chunk
 from app.models.document import Document
@@ -54,14 +53,31 @@ def get_entity_details(
     )
 
     related_entities = (
-        db.query(Entity.entity_text)
-        .filter(
-            Entity.chunk_id.in_(chunk_ids)
+        db.query(
+            Entity.entity_text,
+            func.count(
+                Entity.id
+            ).label(
+                "mentions"
+            )
         )
         .filter(
-            Entity.entity_text != name
+            Entity.chunk_id.in_(
+                chunk_ids
+            )
         )
-        .distinct()
+        .filter(
+            Entity.entity_text !=
+            name
+        )
+        .group_by(
+            Entity.entity_text
+        )
+        .order_by(
+            func.count(
+                Entity.id
+            ).desc()
+        )
         .limit(20)
         .all()
     )
@@ -76,7 +92,10 @@ def get_entity_details(
             for d in documents
         ],
         "related_entities": [
-            e[0]
+            {
+                "name": e[0],
+                "count": e[1]
+            }
             for e in related_entities
         ]
     }
