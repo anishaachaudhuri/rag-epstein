@@ -1,10 +1,11 @@
 from groq import Groq
+import json
 
 from app.core.config import settings
+
 from app.retrieval.hybrid_search import (
     hybrid_search
 )
-import json
 
 client = Groq(
     api_key=settings.GROQ_API_KEY
@@ -25,7 +26,10 @@ def generate_synthesis(
 
     evidence = ""
 
-    for i, result in enumerate(results, start=1):
+    for i, result in enumerate(
+        results,
+        start=1
+    ):
 
         evidence += (
             f"\n\nEvidence {i}\n"
@@ -34,40 +38,61 @@ def generate_synthesis(
         )
 
     prompt = f"""
-    You are an investigative intelligence analyst.
+You are an investigative intelligence analyst.
 
-    Use ONLY the supplied evidence.
+Use ONLY the supplied evidence.
 
-    Query:
-    {query}
+Query:
+{query}
 
-    Evidence:
-    {evidence}
+Evidence:
+{evidence}
 
-    Return ONLY valid JSON.
+Return ONLY valid JSON.
 
-    {{
-    "summary": "short paragraph",
+For every finding include evidence numbers.
 
-    "key_findings": [
-        "finding 1",
-        "finding 2"
-    ],
+Evidence numbers must refer to the supplied evidence list.
 
-    "important_entities": [
-        "entity 1",
-        "entity 2"
-    ],
+Required schema:
 
-    "uncertainties": [
-        "uncertainty 1"
-    ]
-    }}
+summary: string
 
-    Do not include markdown.
-    Do not include explanations outside JSON.
-    Do not invent facts not present in evidence.
-    """
+key_findings:
+[
+  {{
+    finding: string,
+    evidence: [1,2]
+  }}
+]
+
+timeline:
+[
+  {{
+    date: string,
+    event: string,
+    evidence: [1]
+  }}
+]
+
+important_entities:
+string[]
+
+uncertainties:
+string[]
+
+Rules:
+
+- Do not include markdown.
+- Do not include explanations outside JSON.
+- Do not invent facts.
+- Use only supplied evidence.
+- Every finding must have at least one evidence reference.
+- If dates, years, months, or chronology appear in the evidence, generate a timeline.
+- Timeline events must be chronological.
+- Timeline events must include evidence references.
+- Omit timeline events that lack temporal information.
+"""
 
     response = client.chat.completions.create(
         model="llama-3.1-8b-instant",
@@ -81,11 +106,11 @@ def generate_synthesis(
     )
 
     content = (
-    response
-    .choices[0]
-    .message
-    .content
-)
+        response
+        .choices[0]
+        .message
+        .content
+    )
 
     try:
 
@@ -93,11 +118,102 @@ def generate_synthesis(
             content
         )
 
+        for finding in analysis.get(
+            "key_findings",
+            []
+        ):
+
+            sources = []
+
+            for evidence_id in finding.get(
+                "evidence",
+                []
+            ):
+
+                try:
+
+                    idx = (
+                        int(evidence_id)
+                        - 1
+                    )
+
+                    if (
+                        0 <= idx
+                        < len(results)
+                    ):
+
+                        sources.append(
+                            {
+                                "filename":
+                                results[idx][
+                                    "filename"
+                                ],
+
+                                "chunk_index":
+                                results[idx][
+                                    "chunk_index"
+                                ]
+                            }
+                        )
+
+                except Exception:
+                    pass
+
+            finding["sources"] = (
+                sources
+            )
+
+        for event in analysis.get(
+            "timeline",
+            []
+        ):
+
+            sources = []
+
+            for evidence_id in event.get(
+                "evidence",
+                []
+            ):
+
+                try:
+
+                    idx = (
+                        int(evidence_id)
+                        - 1
+                    )
+
+                    if (
+                        0 <= idx
+                        < len(results)
+                    ):
+
+                        sources.append(
+                            {
+                                "filename":
+                                results[idx][
+                                    "filename"
+                                ],
+
+                                "chunk_index":
+                                results[idx][
+                                    "chunk_index"
+                                ]
+                            }
+                        )
+
+                except Exception:
+                    pass
+
+            event["sources"] = (
+                sources
+            )
+
     except Exception:
 
         analysis = {
             "summary": content,
             "key_findings": [],
+            "timeline": [],
             "important_entities": [],
             "uncertainties": []
         }
@@ -108,11 +224,11 @@ def generate_synthesis(
         "sources": [
             {
                 "filename":
-                r["filename"],
+                result["filename"],
 
                 "chunk_index":
-                r["chunk_index"]
+                result["chunk_index"]
             }
-            for r in results
+            for result in results
         ]
     }

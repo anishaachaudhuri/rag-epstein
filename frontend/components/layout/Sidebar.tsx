@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const items = [
   {
@@ -10,16 +13,19 @@ const items = [
     href: "/document-intelligence",
   },
   {
-    label: "Synthetic Analysis",
-    href: "/synthetic-analysis",
-  },
-  {
     label: "Entity Explorer",
     href: "/entity-explorer",
+  },
+  {
+    label: "Inquiry & Analysis",
+    href: "/inquiry-analysis",
   },
 ];
 
 export default function Sidebar() {
+  const pathname =
+    usePathname();
+
   return (
     <aside
       className="
@@ -32,21 +38,21 @@ export default function Sidebar() {
       <div className="p-5">
         <div
           className="
-            text-xs
             mono
+            text-xs
             uppercase
             tracking-widest
             text-[var(--muted)]
           "
         >
-          Intelligence System
+          INTELLIGENCE ARCHIVE
         </div>
 
         <h1
           className="
             mt-3
-            text-xl
             newsreader
+            text-xl
           "
         >
           Evidence Archive
@@ -54,36 +60,46 @@ export default function Sidebar() {
       </div>
 
       <nav className="px-3 space-y-1">
-        {items.map((item, index) => (
-          <Link
-            key={item.label}
-            href={item.href}
-            className={`
-              block
-              w-full
-              text-left
-              px-3
-              py-3
-              border
-              text-sm
+        {items.map((item) => {
 
-              ${
-                index === 0
-                  ? `
-                    bg-[var(--panel-2)]
-                    border-[var(--accent)]
-                  `
-                  : `
-                    border-transparent
-                    hover:border-[var(--border)]
-                    hover:bg-[var(--panel-2)]
-                  `
-              }
-            `}
-          >
-            {item.label}
-          </Link>
-        ))}
+          const active =
+            item.href === "/"
+              ? pathname === "/"
+              : pathname === item.href ||
+                pathname.startsWith(
+                  item.href + "/"
+                );
+
+          return (
+            <Link
+              key={item.label}
+              href={item.href}
+              className={`
+                block
+                w-full
+                px-3
+                py-3
+                border
+                text-sm
+
+                ${
+                  active
+                    ? `
+                      border-[var(--accent)]
+                      bg-[var(--panel-2)]
+                    `
+                    : `
+                      border-transparent
+                      hover:border-[var(--border)]
+                      hover:bg-[var(--panel-2)]
+                    `
+                }
+              `}
+            >
+              {item.label}
+            </Link>
+          );
+        })}
       </nav>
     </aside>
   );
