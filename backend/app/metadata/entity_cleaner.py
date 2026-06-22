@@ -22,6 +22,30 @@ BAD_DATES = {
     "sunday"
 }
 
+BAD_ENTITIES = {
+    "MR",
+    "n't",
+    "decades",
+    "monthly",
+    "AI",
+    "AGI",
+    "iPad",
+    "HOUSE",
+    "House",
+    "LLC",
+    "Board",
+    "Court",
+    "State",
+    "the year",
+    "n't",
+    "n’t",
+    "recent years",
+    "May",
+    "Jane",
+    "Jeff",
+    "the day"
+}
+
 NORMALIZATION_MAP = {
     "U.S.": "United States",
     "US": "United States",
@@ -44,7 +68,19 @@ NORMALIZATION_MAP = {
     "New York City": "New York",
 
     "Dershowitz": "Alan Dershowitz",
-    "Maxwell": "Ghislaine Maxwell"
+    "Maxwell": "Ghislaine Maxwell",
+
+    "Obama": "Barack Obama",
+
+    "Snowden": "Edward Snowden",
+
+    "Andrew": "Prince Andrew",
+
+    "Roberts": "Virginia Roberts",
+
+    "UK": "United Kingdom",
+
+    "USA": "United States",
 }
 
 
@@ -68,6 +104,9 @@ def clean_entities(entities):
             text = NORMALIZATION_MAP[text]
 
         if text.lower() in BAD_DATES:
+            continue
+
+        if text in BAD_ENTITIES:
             continue
 
         if text.isdigit():

@@ -3,61 +3,126 @@ from sqlalchemy import update
 from app.db.session import SessionLocal
 from app.models.entity import Entity
 
+
 NORMALIZATION_MAP = {
+
+    # United States
     "U.S.": "United States",
     "US": "United States",
+    "USA": "United States",
     "America": "United States",
     "the United States": "United States",
-    "USA": "United States",
+
+    # United Kingdom
+    "UK": "United Kingdom",
+    "Britain": "United Kingdom",
+    "England": "United Kingdom",
+
+    # Trump
     "Trump": "Donald Trump",
 
+    # Epstein
     "Epstein": "Jeffrey Epstein",
     "Jeffrey": "Jeffrey Epstein",
     "jeffrey E.": "Jeffrey Epstein",
     "jeffrey E. <": "Jeffrey Epstein",
     "JEE": "Jeffrey Epstein",
-    "Roberts": "Virginia Roberts",
+
+    # Clinton
     "Clinton": "Bill Clinton",
+    "Bill": "Bill Clinton",
+
+    # Hillary
     "Hillary": "Hillary Clinton",
-    "Andrew": "Andrew Prince",
+
+    # Obama
+    "Obama": "Barack Obama",
+    "Barak Obama": "Barack Obama",
+
+    # Snowden
+    "Snowden": "Edward Snowden",
+
+    # Putin
+    "Putin": "Vladimir Putin",
+
+    # Maxwell
+    "Maxwell": "Ghislaine Maxwell",
+
+    # Dershowitz
+    "Dershowitz": "Alan Dershowitz",
+
+    # Benjamin Netanyahu
+    "Bibi": "Benjamin Netanyahu",
+
+    # Prince Andrew
+    "Andrew": "Prince Andrew",
+
+    # Virginia Roberts
+    "Roberts": "Virginia Roberts",
+    "Virginia": "Virginia Roberts",
+
+    # White House
     "the White House": "White House",
 
+    # New York
     "NY": "New York",
     "New York City": "New York",
 
-    "Dershowitz": "Alan Dershowitz",
-    "Maxwell": "Ghislaine Maxwell",
+    # Angela Merkel
+    "Angela Merkel's": "Angela Merkel",
 
-    "Obama": "Barack Obama",
+    # Steve Bannon
+    "Bannon": "Steve Bannon",
 
-    "Britain": "UK",
-    "England": "UK",
+    # Landon Thomas
+    "Thomas Jr.": "Landon Thomas",
+    "landon jr thomas": "Landon Thomas",
+    "Lando": "Landon Thomas",
 
-    "Snowden": "Edward Snowden",
+    # Michael Wolff
+    "Michael": "Michael Wolff",
 
-    "Putin": "Vladimir Putin",
+    # George W. Bush
+    "Bush": "George W. Bush",
 
-    "Bill": "Bill Clinton"
+    # Alexander Acosta
+    "Acosta": "Alexander Acosta"
 }
+
 
 db = SessionLocal()
 
 try:
 
+    total_updates = 0
+
     for old_name, new_name in NORMALIZATION_MAP.items():
 
         result = db.execute(
             update(Entity)
-            .where(Entity.entity_text == old_name)
-            .values(entity_text=new_name)
+            .where(
+                Entity.entity_text == old_name
+            )
+            .values(
+                entity_text=new_name
+            )
         )
 
+        count = result.rowcount
+
+        total_updates += count
+
         print(
-            f"{old_name} -> {new_name} : "
-            f"{result.rowcount} rows updated"
+            f"{old_name} -> {new_name}: "
+            f"{count} rows updated"
         )
 
     db.commit()
+
+    print(
+        f"\nTotal rows updated: "
+        f"{total_updates}"
+    )
 
 finally:
     db.close()

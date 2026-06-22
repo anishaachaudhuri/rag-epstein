@@ -14,6 +14,8 @@ ALLOWED_LABELS = {
 
 def extract_entities(text: str):
 
+    if len(text) > 200000:
+        return []
     doc = nlp(text)
 
     entities = []

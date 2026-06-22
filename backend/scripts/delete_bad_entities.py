@@ -23,16 +23,27 @@ BAD_ENTITIES = {
     "weeks",
 
     "the day",
-    "September"
+    "the year",
 
-    "MR"
-    "n't"
-    "decades"
-    "monthly"
-    "March"
-    "AI"
-    "AGI"
-    "iPad"
+    "September",
+    "March",
+
+    "MR",
+    "n't",
+    "n’t",
+
+    "decades",
+    "monthly",
+
+    "AI",
+    "AGI",
+
+    "iPad",
+    "Jeff",
+    "Jane",
+    "recent years",
+    "the day",
+    "me"
 }
 
 db = SessionLocal()

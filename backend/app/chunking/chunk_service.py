@@ -23,7 +23,10 @@ def chunk_document(
         text.split()
     )
 
-    if word_count < 600:
+    if (
+        word_count < 600
+        and len(text) < 50000
+    ):
         return [text]
 
     if word_count < 1500:
