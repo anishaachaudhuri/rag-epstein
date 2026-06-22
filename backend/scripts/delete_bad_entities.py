@@ -44,7 +44,11 @@ BAD_ENTITIES = {
     "recent years",
     "the day",
     "me",
-    "jeffrey E.\""
+    "jeffrey E.\"",
+    "P.C.",
+    "this year",
+    "one day",
+    "Honor"
 }
 
 db = SessionLocal()

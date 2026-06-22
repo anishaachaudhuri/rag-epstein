@@ -30,6 +30,10 @@ NORMALIZATION_MAP = {
 
     "Hillary": "Hillary Clinton",
 
+    "Greenwald": "Glenn Greenwald",
+    "Poitras": "Laura Poitras",
+    "al Qaeda": "al-Qaeda",
+
     "Obama": "Barack Obama",
     "Barak Obama": "Barack Obama",
 

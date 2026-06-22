@@ -17,7 +17,7 @@ from app.services.ingestion_service import (
 )
 
 
-MAX_DOCS = 12000
+MAX_DOCS = None
 
 
 def run():
@@ -54,7 +54,10 @@ def run():
                 f"[{processed}] {doc['filename']}"
             )
 
-            if processed >= MAX_DOCS:
+            if (
+                MAX_DOCS is not None
+                and processed >= MAX_DOCS
+            ):
                 break
 
     finally:
