@@ -6,87 +6,71 @@ from app.models.entity import Entity
 
 NORMALIZATION_MAP = {
 
-    # United States
     "U.S.": "United States",
     "US": "United States",
     "USA": "United States",
     "America": "United States",
     "the United States": "United States",
 
-    # United Kingdom
     "UK": "United Kingdom",
     "Britain": "United Kingdom",
     "England": "United Kingdom",
 
-    # Trump
     "Trump": "Donald Trump",
 
-    # Epstein
     "Epstein": "Jeffrey Epstein",
     "Jeffrey": "Jeffrey Epstein",
     "jeffrey E.": "Jeffrey Epstein",
     "jeffrey E. <": "Jeffrey Epstein",
     "JEE": "Jeffrey Epstein",
+    'jeffrey E."': "Jeffrey Epstein",
 
-    # Clinton
     "Clinton": "Bill Clinton",
     "Bill": "Bill Clinton",
 
-    # Hillary
     "Hillary": "Hillary Clinton",
 
-    # Obama
     "Obama": "Barack Obama",
     "Barak Obama": "Barack Obama",
 
-    # Snowden
     "Snowden": "Edward Snowden",
 
-    # Putin
     "Putin": "Vladimir Putin",
 
-    # Maxwell
     "Maxwell": "Ghislaine Maxwell",
 
-    # Dershowitz
     "Dershowitz": "Alan Dershowitz",
 
-    # Benjamin Netanyahu
     "Bibi": "Benjamin Netanyahu",
 
-    # Prince Andrew
     "Andrew": "Prince Andrew",
 
-    # Virginia Roberts
     "Roberts": "Virginia Roberts",
     "Virginia": "Virginia Roberts",
 
-    # White House
     "the White House": "White House",
 
-    # New York
     "NY": "New York",
     "New York City": "New York",
+    "new york": "New York",
 
-    # Angela Merkel
     "Angela Merkel's": "Angela Merkel",
 
-    # Steve Bannon
     "Bannon": "Steve Bannon",
 
-    # Landon Thomas
     "Thomas Jr.": "Landon Thomas",
     "landon jr thomas": "Landon Thomas",
     "Lando": "Landon Thomas",
 
-    # Michael Wolff
     "Michael": "Michael Wolff",
 
-    # George W. Bush
     "Bush": "George W. Bush",
 
-    # Alexander Acosta
-    "Acosta": "Alexander Acosta"
+    "Acosta": "Alexander Acosta",
+
+    "the New York Times": "New York Times",
+
+    "Ghislaine": "Ghislaine Maxwell"
 }
 
 

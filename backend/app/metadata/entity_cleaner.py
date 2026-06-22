@@ -43,7 +43,8 @@ BAD_ENTITIES = {
     "May",
     "Jane",
     "Jeff",
-    "the day"
+    "the day",
+    "jeffrey E.\""
 }
 
 NORMALIZATION_MAP = {

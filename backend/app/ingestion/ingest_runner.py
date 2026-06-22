@@ -17,7 +17,7 @@ from app.services.ingestion_service import (
 )
 
 
-MAX_DOCS = 8000
+MAX_DOCS = 12000
 
 
 def run():
