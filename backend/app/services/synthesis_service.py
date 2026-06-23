@@ -48,50 +48,56 @@ Query:
 Evidence:
 {evidence}
 
-Return ONLY valid JSON.
+Return ONLY a valid JSON object.
 
-For every finding include evidence numbers.
+The response MUST exactly follow this schema:
 
-Evidence numbers must refer to the supplied evidence list.
+{{
+  "summary": "string",
 
-Required schema:
+  "key_findings": [
+    {{
+      "finding": "string",
+      "evidence": [1]
+    }}
+  ],
 
-summary: string
+  "timeline": [
+    {{
+      "date": "string",
+      "event": "string",
+      "evidence": [1]
+    }}
+  ],
 
-key_findings:
-[
-  {{
-    finding: string,
-    evidence: [1,2]
-  }}
-]
+  "important_entities": [
+    "string"
+  ],
 
-timeline:
-[
-  {{
-    date: string,
-    event: string,
-    evidence: [1]
-  }}
-]
+  "uncertainties": [
+    "string"
+  ]
+}}
 
-important_entities:
-string[]
+Requirements:
 
-uncertainties:
-string[]
-
-Rules:
-
-- Do not include markdown.
-- Do not include explanations outside JSON.
-- Do not invent facts.
-- Use only supplied evidence.
-- Every finding must have at least one evidence reference.
-- If dates, years, months, or chronology appear in the evidence, generate a timeline.
+- summary MUST be a narrative paragraph.
+- summary MUST NOT be an object.
+- summary MUST NOT be an array.
+- key_findings MUST be an array.
+- timeline MUST be an array.
+- important_entities MUST be an array of strings.
+- uncertainties MUST be an array of strings.
+- Every finding must include evidence references.
+- Evidence references must refer to the supplied evidence list.
+- If dates, years, months, or chronology appear in evidence, generate timeline events.
 - Timeline events must be chronological.
 - Timeline events must include evidence references.
-- Omit timeline events that lack temporal information.
+- Omit timeline events without temporal information.
+- Do not invent facts.
+- Use only supplied evidence.
+- Do not return markdown.
+- Do not return explanations outside JSON.
 """
 
     response = client.chat.completions.create(
@@ -112,16 +118,99 @@ Rules:
         .content
     )
 
+    if content:
+
+        content = content.strip()
+
+        if content.startswith("```json"):
+            content = (
+                content
+                .replace("```json", "", 1)
+                .replace("```", "")
+                .strip()
+            )
+
+        elif content.startswith("```"):
+            content = (
+                content
+                .replace("```", "")
+                .strip()
+            )
+
     try:
 
         analysis = json.loads(
             content
         )
 
-        for finding in analysis.get(
+        if not isinstance(
+            analysis,
+            dict
+        ):
+            raise ValueError(
+                "Response is not JSON object"
+            )
+
+        analysis.setdefault(
+            "summary",
+            ""
+        )
+
+        analysis.setdefault(
             "key_findings",
             []
+        )
+
+        analysis.setdefault(
+            "timeline",
+            []
+        )
+
+        analysis.setdefault(
+            "important_entities",
+            []
+        )
+
+        analysis.setdefault(
+            "uncertainties",
+            []
+        )
+
+        if not isinstance(
+            analysis["summary"],
+            str
         ):
+            analysis["summary"] = str(
+                analysis["summary"]
+            )
+
+        if not isinstance(
+            analysis["key_findings"],
+            list
+        ):
+            analysis["key_findings"] = []
+
+        if not isinstance(
+            analysis["timeline"],
+            list
+        ):
+            analysis["timeline"] = []
+
+        if not isinstance(
+            analysis["important_entities"],
+            list
+        ):
+            analysis["important_entities"] = []
+
+        if not isinstance(
+            analysis["uncertainties"],
+            list
+        ):
+            analysis["uncertainties"] = []
+
+        for finding in analysis[
+            "key_findings"
+        ]:
 
             sources = []
 
@@ -163,10 +252,9 @@ Rules:
                 sources
             )
 
-        for event in analysis.get(
-            "timeline",
-            []
-        ):
+        for event in analysis[
+            "timeline"
+        ]:
 
             sources = []
 
@@ -208,19 +296,36 @@ Rules:
                 sources
             )
 
-    except Exception:
+    except Exception as e:
+
+        print(
+            "SYNTHESIS PARSE ERROR:"
+        )
+        print(content)
+        print(e)
 
         analysis = {
-            "summary": content,
+            "summary": (
+                "The model returned "
+                "an invalid response format."
+            ),
+
             "key_findings": [],
+
             "timeline": [],
+
             "important_entities": [],
-            "uncertainties": []
+
+            "uncertainties": [
+                "Response parsing failed."
+            ]
         }
 
     return {
         "query": query,
+
         "analysis": analysis,
+
         "sources": [
             {
                 "filename":
