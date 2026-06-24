@@ -19,7 +19,8 @@ def vector_search(
         c.chunk_id,
         c.chunk_index,
         c.text,
-
+        c.embedding,
+               
         d.filename,
         d.document_type,
 

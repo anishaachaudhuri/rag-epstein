@@ -3,9 +3,11 @@ from collections import defaultdict
 from app.retrieval.vector_search import (
     vector_search
 )
-
 from app.retrieval.bm25_search import (
     bm25_search
+)
+from app.retrieval.mmr import (
+    mmr_rerank
 )
 
 
@@ -54,18 +56,50 @@ def hybrid_search(
 
     final_results = []
 
-    for chunk_id, score in ranked[:limit]:
+    candidates = []
 
-        row = result_map[chunk_id]
+    for chunk_id, score in ranked[:20]:
 
-        final_results.append(
+        row = result_map[
+            chunk_id
+        ]
+
+        candidates.append(
             {
-                "chunk_id": row.chunk_id,
-                "filename": row.filename,
-                "chunk_index": row.chunk_index,
-                "text": row.text,
-                "score": score
+                "chunk_id":
+                row.chunk_id,
+
+                "filename":
+                row.filename,
+
+                "chunk_index":
+                row.chunk_index,
+
+                "text":
+                row.text,
+
+                "embedding":
+                row.embedding,
+
+                "score":
+                score
             }
+        )
+
+    print(type(candidates[0]["embedding"]))
+    print(candidates[0]["embedding"][:100])
+
+    final_results = mmr_rerank(
+        candidates,
+        limit=limit,
+        lambda_param=0.8
+    )
+
+    for result in final_results:
+
+        result.pop(
+            "embedding",
+            None
         )
 
     return final_results
